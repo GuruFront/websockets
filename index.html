@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form id="messageForm">
+    <input type="text" name="name" id="name">
+    <input type="text" name="text" id="text">
+    <input type="submit" value="send">
+</form>
+
+
+
+<div id="chat">
+
+</div>
+
+<script type="module">
+    const  chatEl = document.getElementById('chat');
+
+
+    const ws = new WebSocket("ws://127.0.0.1:8000");
+    ws.onmessage = (message)=>{
+        const messages = JSON.parse(message.data);
+
+
+        messages.forEach((val)=>{
+            console.log(val)
+            const messageEl = document.createElement('div')
+            messageEl.appendChild(document.createTextNode(`${val.name}: ${val.message}`))
+            chat.appendChild(messageEl)
+        })
+    }
+
+    const send = (e)=>{
+        const  name = document.getElementById('name').value;
+        const  message = document.getElementById('text').value;
+
+        ws.send(JSON.stringify({name,message}))
+        e.preventDefault()
+        return false;
+    }
+
+    const formEL = document.getElementById('messageForm')
+    formEL.addEventListener('submit', send);
+
+
+</script>
+</body>
+</html>
